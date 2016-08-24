@@ -9,12 +9,15 @@ using System.Threading.Tasks;
 namespace BeingZeroNunitParallelTests
 {
     [TestFixture]
+    [Parallelizable]
     public class TestimonialsTest : TestBase
     {
         [Test]
-        public void TestimonialsCountTest()
+        [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+       
+        public void TestimonialsCountTest(BrowserName browsers)
         {
-
+            setup(browsers);
             driver.Url = "http://beingzero.in/testimonials";
 
             IReadOnlyCollection<IWebElement> testimonials = driver.FindElements(By.ClassName("testimonial-item"));
@@ -24,8 +27,10 @@ namespace BeingZeroNunitParallelTests
         }
 
         [Test]
-        public void QuestionsCountTest()
+        [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+        public void QuestionsCountTest(BrowserName browsers)
         {
+            setup(browsers);
             driver.Url = "http://beingzero.in/java-quiz/arrays-quiz";
             IReadOnlyCollection<IWebElement> Questions = driver.FindElements(By.ClassName("mtq_question.mtq_scroll_item-1"));
 

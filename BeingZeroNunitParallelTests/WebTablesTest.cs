@@ -12,13 +12,18 @@ using System.Threading.Tasks;
 namespace BeingZeroNunitParallelTests
 {
     [TestFixture]
+    [Parallelizable]
     public class WebTablesTest : TestBase
     {
         
 
         [Test]
-        public void AddRandomRowsTest()
+        [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+        [Order(3)]
+        public void AddRandomRowsTest(BrowserName browsers)
         {
+            setup(browsers);
+
             driver.Url = "http://beingzero.in/selenium-webtables";
 
             IWebElement table = driver.FindElement(By.Id("dataTable"));
@@ -44,8 +49,11 @@ namespace BeingZeroNunitParallelTests
         }
 
         [Test]
-        public void DeleteRowsTest()
+        [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+        [Order(2)]
+        public void DeleteRowsTest(BrowserName browsers)
         {
+            setup(browsers);
             // Opening the Page
             driver.Url = "http://beingzero.in/selenium-webtables";
 
@@ -108,8 +116,11 @@ namespace BeingZeroNunitParallelTests
         }
 
         [Test]
-        public void DeleteAllRows()
+        [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+        [Order(1)]
+        public void DeleteAllRows(BrowserName browsers)
         {
+            setup(browsers);
             driver.Url = "http://beingzero.in/selenium-webtables";
 
             IWebElement table = driver.FindElement(By.Id("dataTable"));

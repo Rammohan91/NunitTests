@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace BeingZeroNunitParallelTests
 {
     [TestFixture]
+    [Parallelizable]
     public class LoginTests : TestBase
     {
         [Test]
