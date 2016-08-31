@@ -15,6 +15,108 @@ namespace BeingZeroNunitParallelTests
     [Parallelizable]
     public class WebTablesTest : TestBase
     {
+        [Test]
+        [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+        public void Gmail2Tabs(BrowserName browsers)
+        {
+            setup(browsers);
+
+            driver.Url = "https://accounts.google.com/SignUp?continue=https%3A%2F%2Fwww.google.co.in%2F&hl=en";
+
+            string parent_window = driver.CurrentWindowHandle;
+            Console.WriteLine("Parent Window: "+parent_window);
+            driver.FindElement(By.LinkText("Learn more")).Click();
+
+            foreach (string window in driver.WindowHandles)
+            {
+                driver.SwitchTo().Window(window);
+                Console.WriteLine("All Windows: " + window);
+                Thread.Sleep(5000);
+            }
+
+            Assert.True(driver.Url.Contains("1733224"));
+            driver.Close();
+            Thread.Sleep(5000);
+            driver.SwitchTo().Window(parent_window);
+            Assert.True(driver.Url.Contains("SignUp"));
+
+            Thread.Sleep(5000);
+        }
+
+
+        [Test]
+        [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+        public void CloseAllNaukriPopupsExceptMainPage(BrowserName browsers)
+        {
+            setup(browsers);
+            driver.Url = "http://www.naukri.com";
+
+            string parent_window = driver.CurrentWindowHandle;
+
+            foreach (string window in driver.WindowHandles)
+            {
+                driver.SwitchTo().Window(window);
+                Console.WriteLine("All Windows:" + window);
+                //Console.WriteLine();
+                if (!window.Equals(parent_window))
+                {
+                    Console.WriteLine("Window Closed: " + window);
+                    driver.Close();
+                }
+                 
+            }
+            Thread.Sleep(6000);
+        }
+
+
+        [Test]
+        [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+        public void CloseAllWindowsExpectHomePage(BrowserName browsers)
+        {
+            setup(browsers);
+
+            driver.Url = "http://www.naukri.com";
+
+            for (int i = 1; i <= 5; i++)
+            { 
+            driver.FindElement(By.XPath("//div[@class=\"headGNBWrap\"]/div/ul/li["+i+"]/a")).Click();
+            }
+            Thread.Sleep(5000);
+
+
+            String parent_window = driver.CurrentWindowHandle;
+
+            foreach (String window in driver.WindowHandles)
+            {
+                driver.SwitchTo().Window(window);
+
+                if (!window.Equals(parent_window))
+                {
+                    Console.WriteLine("Closed Windows Title: " + driver.Title);
+                    driver.Close();
+                    Thread.Sleep(2000);
+
+                }
+                
+            }
+
+            Assert.True(driver.Title.Equals(" Jobs - Recruitment - Job Search - Employment - Job Vacancies - Naukri.com "));
+
+        }
+
+
+
+        [Test]
+        [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+        public void Test(BrowserName browsers)
+        {
+            setup(browsers);
+
+            driver.Url = "http://www.ah.nl/";
+            driver.Manage().Window.Maximize();
+            driver.FindElement(By.XPath("//*[@id='mCSB_1_container']/div/div[2]/form/div/input")).Click();
+
+        }
         
 
         [Test]
