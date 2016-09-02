@@ -51,7 +51,7 @@ namespace BeingZeroNunitParallelTests
 
         public static IEnumerable<BrowserName> BrowsersToRunWith()
         {
-        BrowserName[] browsers = { BrowserName.Chrome};
+        BrowserName[] browsers = { BrowserName.Chrome, };
 
         foreach (BrowserName b in browsers)
 	    {

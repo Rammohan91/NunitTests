@@ -16,6 +16,21 @@ namespace BeingZeroNunitParallelTests
     public class WebTablesTest : TestBase
     {
         [Test]
+        [TestCase("bandarammohan@gmail.com", "stop9723858661#", true)]
+        [TestCase("bandarammohan@gmail.com", "1234", false)]
+        public void LoginTests(string username, string password, Boolean expectedResults)
+        {
+            setup(BrowserName.Chrome);
+            driver.Url = "https://mail.google.com";
+            driver.FindElement(By.Id("Email")).SendKeys(username);
+            driver.FindElement(By.Id("next")).Click();
+            driver.FindElement(By.Id("Passwd")).SendKeys(password);
+            driver.FindElement(By.Id("signIn")).Click();
+
+            Assert.True(driver.Title.Contains("bandarammohan@gmail.com").Equals(expectedResults));
+        }
+
+        [Test]
         [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
         public void Gmail2Tabs(BrowserName browsers)
         {
@@ -32,6 +47,7 @@ namespace BeingZeroNunitParallelTests
                 driver.SwitchTo().Window(window);
                 Console.WriteLine("All Windows: " + window);
                 Thread.Sleep(5000);
+
             }
 
             Assert.True(driver.Url.Contains("1733224"));
@@ -50,7 +66,7 @@ namespace BeingZeroNunitParallelTests
         {
             setup(browsers);
             driver.Url = "http://www.naukri.com";
-
+            
             string parent_window = driver.CurrentWindowHandle;
 
             foreach (string window in driver.WindowHandles)
@@ -60,11 +76,13 @@ namespace BeingZeroNunitParallelTests
                 //Console.WriteLine();
                 if (!window.Equals(parent_window))
                 {
+                    takeScreenshot();
                     Console.WriteLine("Window Closed: " + window);
                     driver.Close();
                 }
                  
             }
+            takeScreenshot();
             Thread.Sleep(6000);
         }
 
@@ -92,16 +110,17 @@ namespace BeingZeroNunitParallelTests
 
                 if (!window.Equals(parent_window))
                 {
+                    takeScreenshot();
                     Console.WriteLine("Closed Windows Title: " + driver.Title);
                     driver.Close();
                     Thread.Sleep(2000);
-
                 }
                 
             }
-
-            Assert.True(driver.Title.Equals(" Jobs - Recruitment - Job Search - Employment - Job Vacancies - Naukri.com "));
-
+            driver.SwitchTo().Window(parent_window);
+            
+            Assert.True(driver.Title.Equals("Jobs - Recruitment - Job Search - Employment - Job Vacancies - Naukri.com"));
+            takeScreenshot();
         }
 
 
@@ -121,6 +140,7 @@ namespace BeingZeroNunitParallelTests
 
         [Test]
         [TestCaseSource(typeof(TestBase), "BrowsersToRunWith")]
+        
         [Order(3)]
         public void AddRandomRowsTest(BrowserName browsers)
         {
@@ -215,6 +235,16 @@ namespace BeingZeroNunitParallelTests
             Console.WriteLine("Final Row Count is:" +finalRowCount);
             Assert.AreEqual(finalRowCount, initRowCount + n - m);
 
+        }
+
+        public void takeScreenshot()
+        {
+            ITakesScreenshot screenshotHandler = driver as  ITakesScreenshot;
+            Screenshot screenshot = screenshotHandler.GetScreenshot();
+
+            int fileIncrementSting = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+            screenshot.SaveAsFile(@"D:\\SeleniumTutorials\\ScreenShotAT" + fileIncrementSting + ".png", System.Drawing.Imaging.ImageFormat.Png);
+            screenshot.ToString();
         }
 
         [Test]
